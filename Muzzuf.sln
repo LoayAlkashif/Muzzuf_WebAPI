@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35521.163
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Muzzuf", "Muzzuf\Muzzuf.csproj", "{8D50030F-F85D-4127-8E03-6651CB791F18}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Muzzuf.DataAccess", "Muzzuf.DataAccess\Muzzuf.DataAccess.csproj", "{A9D7B763-CC2A-4CDE-B95C-52361DCE8183}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Muzzuf.Service", "Muzzuf.Service\Muzzuf.Service.csproj", "{BBB80160-ED50-4D1A-A248-CFE8248FE960}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8D50030F-F85D-4127-8E03-6651CB791F18}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D50030F-F85D-4127-8E03-6651CB791F18}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D50030F-F85D-4127-8E03-6651CB791F18}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D50030F-F85D-4127-8E03-6651CB791F18}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A9D7B763-CC2A-4CDE-B95C-52361DCE8183}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A9D7B763-CC2A-4CDE-B95C-52361DCE8183}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A9D7B763-CC2A-4CDE-B95C-52361DCE8183}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A9D7B763-CC2A-4CDE-B95C-52361DCE8183}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BBB80160-ED50-4D1A-A248-CFE8248FE960}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BBB80160-ED50-4D1A-A248-CFE8248FE960}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BBB80160-ED50-4D1A-A248-CFE8248FE960}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BBB80160-ED50-4D1A-A248-CFE8248FE960}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

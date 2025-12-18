@@ -1,0 +1,32 @@
+# Build
+bin/
+obj/
+
+# VS
+.vs/
+*.user
+*.suo
+*.userprefs
+*.cache
+
+# NuGet
+packages/
+*.nupkg
+
+# Logs
+*.log
+
+# Publish
+publish/
+
+# App settings
+appsettings.json
+appsettings.*.json
+
+# Certificates
+*.pfx
+*.cer
+
+# Others
+TestResults/
+CoverageResults/
