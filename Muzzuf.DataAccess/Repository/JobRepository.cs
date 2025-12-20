@@ -14,18 +14,23 @@ namespace Muzzuf.DataAccess.Repository
     {
         public JobRepository(MuzzufContext context) : base (context) {  }
         
-        public async Task<IEnumerable<Job>> GetActiveJobsAsync()
+        public IQueryable<Job> GetActiveJobsAsync()
         {
-            return await _context.Jobs.Where(j => j.IsActive)
-                .Include(j => j.AddedBy)
-                .ToListAsync();
+            return _context.Jobs.Where(j => j.IsActive)
+                .Include(j => j.AddedBy).Include(q => q.Questions);
         }
 
-        public async Task<IEnumerable<Job>> GetJobsByEmployerAsync(string employerId)
+        public Task<Job?> GetByIdWithQuestionsAsync(int id)
         {
-            return await _context.Jobs.Where(j => j.AddedById == employerId)
-                .Include(j => j.Questions)
-                .ToListAsync();
+            return _context.Jobs.Include(j => j.AddedBy)
+                .Include(q => q.Questions)
+                .FirstOrDefaultAsync(j => j.Id == id);
+        }
+
+        public IQueryable<Job> GetJobsByEmployerAsync(string employerId)
+        {
+            return _context.Jobs.Where(j => j.AddedById == employerId)
+                .Include(q => q.Questions);
         }
     }
 }

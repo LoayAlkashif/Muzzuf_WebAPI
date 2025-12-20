@@ -9,8 +9,10 @@ namespace Muzzuf.DataAccess.IRepository
 {
     public interface IJobRepository : IGenericRepository<Job>
     {
-        Task<IEnumerable<Job>> GetJobsByEmployerAsync(string employerId);
+        public IQueryable<Job> GetJobsByEmployerAsync(string employerId);
 
-        Task<IEnumerable<Job>> GetActiveJobsAsync();
+        IQueryable<Job> GetActiveJobsAsync();
+
+        Task<Job?> GetByIdWithQuestionsAsync(int id);
     }
 }
