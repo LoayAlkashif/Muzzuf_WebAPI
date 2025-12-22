@@ -16,7 +16,10 @@ namespace Muzzuf.DataAccess.Repository
 
         public async Task<Application?> GetApplicationWithAnswersAsync(int applicationId)
         {
-            return await _context.Applications.Include(a => a.Answers)
+            return await _context.Applications
+                .Include(a => a.Employee)
+                .Include(a => a.Job)
+                .Include(a => a.Answers)
                 .ThenInclude(ans => ans.Question)
                 .FirstOrDefaultAsync(a => a.Id == applicationId);
         }
@@ -24,6 +27,13 @@ namespace Muzzuf.DataAccess.Repository
         public async Task<bool> HasUserAppliedAsync(string employeeId, int jobId)
         {
             return await _context.Applications.AnyAsync(a => a.EmployeeId == employeeId && a.JobId == jobId);
+        }
+
+
+        public IQueryable<Application> GetJobApplicationsQueryable(int jobId)
+        {
+            return _context.Applications.Include(a => a.Employee)
+                .Where(a => a.JobId == jobId);
         }
     }
 }

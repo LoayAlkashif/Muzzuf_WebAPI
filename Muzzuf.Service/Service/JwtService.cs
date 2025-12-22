@@ -47,7 +47,7 @@ namespace Muzzuf.Service.Service
                 issuer: _config["BASEURL"],
                         audience: _config["JWT:AudienceIp"],
                         claims: claims,
-                        expires: DateTime.UtcNow.AddHours(1),
+                        expires: DateTime.UtcNow.AddHours(72),
                         signingCredentials: Signature
                 );
 

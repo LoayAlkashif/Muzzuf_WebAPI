@@ -34,7 +34,7 @@ namespace Muzzuf.Controllers
         }
 
         [HttpGet("active-jobs")]
-        public async Task<IActionResult> ActiveJobs([FromQuery] string query, [FromQuery] int page =1,  [FromQuery] int limit = 10)
+        public async Task<IActionResult> ActiveJobs([FromQuery] string? query, [FromQuery] int page =1,  [FromQuery] int limit = 10)
         {
             var result = await _jobService.GetActiveJobsAsync(query, page, limit);
             return Ok(result);
@@ -80,7 +80,7 @@ namespace Muzzuf.Controllers
 
         [HttpGet("employer-jobs")]
         [Authorize(Roles ="Employer")]
-        public async Task<IActionResult> GetEmployerJobs([FromQuery] string query, [FromQuery] int page = 1,  [FromQuery] int limit = 10)
+        public async Task<IActionResult> GetEmployerJobs([FromQuery] string? query, [FromQuery] int page = 1,  [FromQuery] int limit = 10)
         {
             var employer = await _userManager.GetUserAsync(User);
             var EmployerJobs = await _jobService.GetEmployerJobsAsync(employer.Id, query, page, limit);

@@ -16,7 +16,7 @@ namespace Muzzuf.DataAccess.Repository
         
         public IQueryable<Job> GetActiveJobsAsync()
         {
-            return _context.Jobs.Where(j => j.IsActive)
+            return _context.Jobs.Where(j => j.IsActive == true)
                 .Include(j => j.AddedBy).Include(q => q.Questions);
         }
 

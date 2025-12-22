@@ -22,6 +22,6 @@ namespace Muzzuf.Service.DTO.JobDTO
 
         public bool IsActive { get; set; }
 
-        public List<JobQuestionDto> Questions { get; set; }
+        public List<JobQuestionDto>? Questions { get; set; }
     }
 }

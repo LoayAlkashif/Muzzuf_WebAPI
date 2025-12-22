@@ -5,13 +5,15 @@ using System.Text;
 using System.Threading.Tasks;
 using Muzzuf.DataAccess.Enums;
 
-namespace Muzzuf.Service.DTO.JobDTO
+namespace Muzzuf.Service.DTO.ApplicationDTO
 {
-    public class JobQuestionDto
+    public class ApplicationAnswerDetailsDto
     {
-        public int? Id { get; set; }
         public string QuestionName { get; set; }
-
         public AnswerType AnswerType { get; set; }
+
+        public string? TextAnswer { get; set; }
+        public string? RecordUrl { get; set; }
     }
+
 }

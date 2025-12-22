@@ -22,8 +22,7 @@ namespace Muzzuf.Service.IService
 
         Task<PagedResult<JobDto>> GetEmployerJobsAsync (string employerId,string query, int page, int limit);
 
-        void DeActiveJobAsync(int jobId, string employerId);
-
+        Task DeActiveJobAsync(int jobId, string employerId);
 
 
 

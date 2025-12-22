@@ -16,7 +16,8 @@ namespace Muzzuf.DataAccess.ClassConfigurations
         {
             builder.HasMany(u => u.JobsAdded)
                 .WithOne(j => j.AddedBy)
-                .HasForeignKey(j => j.AddedById);
+                .HasForeignKey(j => j.AddedById)
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.Property(u => u.ProgrammingLanguages)
                      .HasConversion(

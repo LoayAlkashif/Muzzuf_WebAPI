@@ -24,7 +24,9 @@ namespace Muzzuf.DataAccess.ClassConfigurations
                 .HasForeignKey(q => q.JobId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-          
+            builder.Navigation(j => j.Questions).AutoInclude();
+            builder.Property(j => j.IsActive).HasDefaultValue(true);
+
             builder.Property(j => j.Level).HasConversion<string>();
 
             builder.Property(j => j.RequiredLanguage)

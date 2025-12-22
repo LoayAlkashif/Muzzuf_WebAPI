@@ -52,12 +52,12 @@ namespace Muzzuf
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IJobRepository, JobRepository>();
             builder.Services.AddScoped<IApplicationRepository, ApplicationRepository>();
-            builder.Services.AddScoped<IJobQuestionRepository, JobQuestionRepository>();
-            builder.Services.AddScoped<IApplicationAnswerRepository,  ApplicationAnswerRepository>();
 
+            builder.Services.AddScoped<IApplicationService, ApplicationService>();
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<IEmailService, EmailService>();
             builder.Services.AddScoped<IFileService, FileService>();
+            builder.Services.AddScoped<IJobService, JobService>();
             builder.Services.AddScoped<IJwtService, JwtService>();
             builder.Services.AddScoped<IPaginationService, PaginationService>();
             builder.Services.AddScoped<IUserService, UserService>();

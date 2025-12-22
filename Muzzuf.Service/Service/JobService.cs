@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Muzzuf.DataAccess.Entites;
 using Muzzuf.DataAccess.IRepository;
 using Muzzuf.Service.CustomError;
@@ -42,6 +43,7 @@ namespace Muzzuf.Service.Service
 
                 Questions = job.Questions.Select(q => new JobQuestionDto
                 {
+                    Id = q.Id,
                     QuestionName = q.QuestionName,
                     AnswerType = q.AnswerType
                 }).ToList()
@@ -63,19 +65,20 @@ namespace Muzzuf.Service.Service
                 City = dto.City,
                 RequiredLanguage = dto.RequiredLanguage,
                 AddedById = employer.Id,
-                Level = dto.Level
+                Level = dto.Level,
+                Questions = dto.Questions?.Select(q => new JobQuestion
+                {
+
+                      QuestionName = q.QuestionName,
+                      AnswerType = q.AnswerType
+                }).ToList()
             };
 
-            if(dto.Questions != null && dto.Questions.Any())
-            {
-                job.Questions = dto.Questions.Select(q => new JobQuestion
-                {
-                    QuestionName = q.QuestionName,
-                    AnswerType = q.AnswerType,
-                }).ToList();
-            }
+
             await _jobRepo.AddAsync(job);
             await _jobRepo.SaveAsync();
+
+            job = await _jobRepo.GetByIdWithQuestionsAsync(job.Id);
 
             return jobResponse(job);
         }
@@ -112,7 +115,8 @@ namespace Muzzuf.Service.Service
                     City = j.City,
                     Description = j.Description,
                     RequiredLanguage = j.RequiredLanguage,
-                    Level = j.Level
+                    Level = j.Level,
+                    IsActive = j.IsActive,
                 });
 
             return await _paginationService.PaginateAsync(dtoQuery, page, limit);
@@ -167,12 +171,47 @@ namespace Muzzuf.Service.Service
             job.Level = dto.Level;
             job.RequiredLanguage = dto.RequiredLanguage;
 
+            if(dto.Questions != null)
+            {
+                var QuestionsIds = dto.Questions.Where(q => q.Id.HasValue)
+                .Select(q => q.Id.Value).ToList();
+
+                var RemovedQuestions = job.Questions.Where(q => !QuestionsIds.Contains(q.Id)).ToList();
+
+                foreach (var q in RemovedQuestions)
+                {
+                    job.Questions.Remove(q);
+                }
+
+                foreach (var questionDto in dto.Questions)
+                {
+                    if(questionDto.Id == null)
+                    {
+                        job.Questions.Add(new JobQuestion
+                        {
+                            QuestionName = questionDto.QuestionName,
+                            AnswerType = questionDto.AnswerType,
+                        });
+                    }
+                    else
+                    {
+                        var existingQuestion = job.Questions.FirstOrDefault(q => q.Id == questionDto.Id);
+
+                        if(existingQuestion != null)
+                        {
+                            existingQuestion.QuestionName = questionDto.QuestionName;
+                            existingQuestion.AnswerType = questionDto.AnswerType;
+                        }
+                    }
+                }
+            }
+
             _jobRepo.Update(job);
             await _jobRepo.SaveAsync();
             return jobResponse(job);
         }
 
-        public async void DeActiveJobAsync(int jobId, string employerId)
+        public async Task DeActiveJobAsync(int jobId, string employerId)
         {
             var job = await _jobRepo.GetByIdAsync(jobId);
             if (job == null)
