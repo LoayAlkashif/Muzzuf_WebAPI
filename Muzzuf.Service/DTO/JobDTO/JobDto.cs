@@ -11,6 +11,8 @@ namespace Muzzuf.Service.DTO.JobDTO
     {
         public string Id { get; set; }
         public string EmployerName { get; set; }
+        public string CompanyName { get; set; }
+        public string CompanyLogo { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
         public string City { get; set; }

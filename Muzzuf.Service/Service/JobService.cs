@@ -110,6 +110,8 @@ namespace Muzzuf.Service.Service
                 {
                     Id = j.Id.ToString(),
                     EmployerName = j.AddedBy.FullName,
+                    CompanyName = j.AddedBy.CompanyName,
+                    CompanyLogo = j.AddedBy.CompanyLogoUrl,
                     Title = j.Title,
                     Region = j.Region,
                     City = j.City,
