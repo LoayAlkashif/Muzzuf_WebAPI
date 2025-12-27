@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Configuration;
 using Muzzuf.DataAccess.Entites;
 using Muzzuf.DataAccess.IRepository;
@@ -36,31 +38,25 @@ namespace Muzzuf.Service.Service
 
         public async Task Register(RegisterDto dto)
         {
-            if (dto.Password != dto.ConfirmPassword) throw new BadRequestException("Passwords not match");
+            if (dto.Password != dto.ConfirmPassword)
+                throw new BadRequestException("Passwords not match");
 
             if (await _userRepository.GetByEmailAsync(dto.Email) != null)
                 throw new ConflictException("Email already Exist");
-
-            if(!string.IsNullOrEmpty(dto.NationalId))
-            {
-                var nationalIdExist = _userManager.Users.Any(u => u.NationalId == dto.NationalId);
-                if (nationalIdExist)
-                    throw new ConflictException("National ID is already Exist");
-            }
 
             var user = new ApplicationUser
             {
                 FullName = dto.FullName,
                 Email = dto.Email,
                 UserName = dto.Email,
-                NationalId = dto.NationalId,
                 Region = dto.Region,
                 City = dto.City,
                 Bio = dto.Bio,
-                Level = dto.Level ?? null,
+                Level = dto.Level,
                 ProgrammingLanguages = dto.ProgrammingLanguages,
-                CompanyName = dto.CompanyName ?? null,
-                CompanyDescription = dto.CompanyDescription ?? null,
+                CompanyName = dto.CompanyName,
+                CompanyDescription = dto.CompanyDescription,
+                Verified = false
             };
 
             var result = await _userManager.CreateAsync(user, dto.Password);
@@ -68,24 +64,26 @@ namespace Muzzuf.Service.Service
             if (!result.Succeeded)
                 throw new BadRequestException(result.Errors.First().Description);
 
-
             await _userManager.AddToRoleAsync(user, dto.UserType.ToString());
 
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            token = Uri.EscapeDataString(token);
 
+            var encodedToken = WebEncoders.Base64UrlEncode( Encoding.UTF8.GetBytes(token));
 
-            var verificationLink = $"{_config["BASEURL"]}/api/auth/confirm-email?userId={user.Id}&token={token}";
+            var verificationLink =
+                $"{_config["JWT:AudienceIp"]}/auth/confirm-email?userId={user.Id}&token={encodedToken}";
 
-            await _emailService.SendAsync(user.Email,
-                "Verifiy your Email",
+            await _emailService.SendAsync(
+                user.Email,
+                "Verify your Email",
                 $@"
-                    <h2> Welcome {user.FullName} </h2>
-                    <p> Please Verifiy your email by clicking the link below: </p>
-                    <a href='{verificationLink}'> Verify Email </a>
-                "
-                );
+                <h2>Welcome {user.FullName}</h2>
+                <p>Please verify your email by clicking the link below:</p>
+                <a href='{verificationLink}'>Verify Email</a>
+                ");
 
+            Console.WriteLine("REGISTER TOKEN:");
+            Console.WriteLine(token);
         }
 
 
@@ -113,22 +111,27 @@ namespace Muzzuf.Service.Service
 
         public async Task ConfirmEmailAsync(string userId, string token)
         {
-            var user = await _userRepository.GetByIdAsync(userId);
+            var user = await _userManager.FindByIdAsync(userId);
 
             if (user == null)
                 throw new NotFoundException("User not found");
 
-            token = Uri.UnescapeDataString(token);
+            if (user.EmailConfirmed)
+                throw new BadRequestException("Email already verified");
 
-            var result = await _userManager.ConfirmEmailAsync(user, token);
+            var decodedToken = Encoding.UTF8.GetString(
+                                WebEncoders.Base64UrlDecode(token)
+                            );
+
+            var result = await _userManager.ConfirmEmailAsync(user, decodedToken);
 
             if (!result.Succeeded)
-                throw new BadRequestException("Invaild or Expired verification toke");
+                throw new BadRequestException("Invalid or Expired verification token");
 
             user.Verified = true;
             user.EmailConfirmed = true;
             await _userManager.UpdateAsync(user);
         }
-        
+
     }
 }

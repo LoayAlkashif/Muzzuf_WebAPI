@@ -12,6 +12,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Muzzuf.Service.IService;
 using Muzzuf.Service.Service;
+using System.Text.Json;
 
 namespace Muzzuf
 {
@@ -25,6 +26,7 @@ namespace Muzzuf
 
             builder.Services.AddControllers().AddJsonOptions(options =>
             {
+                options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
                 options.JsonSerializerOptions.Converters.Add(
                     new System.Text.Json.Serialization.JsonStringEnumConverter()
                 );
