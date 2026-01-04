@@ -12,7 +12,7 @@ namespace Muzzuf.Service.IService
     {
         Task<PagedResult<JobDto>> GetActiveJobsAsync(string query, int page, int limit);
 
-        Task<JobDto> GetJobByIdAsyc(int jobId);
+        Task<JobDto> GetJobByIdAsyc(int jobId, string currentUserId);
 
         Task<JobDto> CreateJobAsync(string employerId, CreateUpdateJobDto dto);
 

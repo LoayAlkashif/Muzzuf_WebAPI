@@ -19,6 +19,7 @@ namespace Muzzuf.Service.DTO.JobDTO
         public string Region { get; set; }
 
         public JobLevel Level { get; set; }
+        public ApplicationStatus? ApplicationStatus { get; set; }
 
         public List<string> RequiredLanguage { get; set; }
 

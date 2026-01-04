@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Muzzuf.Service.CustomError;
 using Muzzuf.Service.IService;
 
@@ -13,17 +14,23 @@ namespace Muzzuf.Service.Service
     public class FileService : IFileService
     {
         private readonly IWebHostEnvironment _env;
+        private readonly IConfiguration _config;
 
-        public FileService(IWebHostEnvironment env)
+        public FileService(IWebHostEnvironment env, IConfiguration config)
         {
             _env = env;
+            _config = config;
         }
         public void Delete(string fileUrl)
         {
             if (string.IsNullOrEmpty(fileUrl)) return;
 
-            var fullPath = Path.Combine(_env.WebRootPath, fileUrl.TrimStart('/'));
-            if(File.Exists(fullPath))
+            var uri = new Uri(fileUrl);
+            var relativePath = uri.LocalPath.TrimStart('/');
+
+            var fullPath = Path.Combine(_env.WebRootPath, relativePath);
+
+            if (File.Exists(fullPath))
                 File.Delete(fullPath);
         }
 
@@ -43,7 +50,7 @@ namespace Muzzuf.Service.Service
 
             await file.CopyToAsync(stream);
 
-            return $"/{folderName}/{fileName}";
+            return $"{_config["BASEURL"]}/{folderName}/{fileName}";
         }
     }
 }

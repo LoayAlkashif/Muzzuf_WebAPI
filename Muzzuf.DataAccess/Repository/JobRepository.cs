@@ -23,6 +23,7 @@ namespace Muzzuf.DataAccess.Repository
         public Task<Job?> GetByIdWithQuestionsAsync(int id)
         {
             return _context.Jobs.Include(j => j.AddedBy)
+                .Include(j => j.Applications)
                 .Include(q => q.Questions)
                 .FirstOrDefaultAsync(j => j.Id == id);
         }

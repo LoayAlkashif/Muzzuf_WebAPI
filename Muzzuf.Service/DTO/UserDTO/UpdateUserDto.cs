@@ -13,6 +13,10 @@ namespace Muzzuf.Service.DTO.UserDTO
         public string? Region { get; set; }
         public string? Bio { get; set; }
 
+        public string? CompanyName { get; set; }
+        public string? CompanyDescription { get; set; }
+
+
         public List<string>? ProgrammingLanguages { get; set; }
     }
 }

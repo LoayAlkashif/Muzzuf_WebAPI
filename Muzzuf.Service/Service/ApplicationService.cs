@@ -95,7 +95,7 @@ namespace Muzzuf.Service.Service
                 throw new BadRequestException("You have already applied for this job");
 
 
-            var app = new Application
+            var app = new DataAccess.Entites.Application
             {
                 JobId = dto.JobId,
                 EmployeeId = employeeId,
@@ -218,6 +218,40 @@ namespace Muzzuf.Service.Service
                     AnswerType = a.Question.AnswerType,
                     TextAnswer = a.TextAnswer,
                     RecordUrl = a.RecordAnswerUrl
+                }).ToList()
+            };
+        }
+
+        public async Task<PagedResult<EmployeeApplicationDto>>
+            GetEmployeeApplicationsAsync(string employeeId, int page, int limit)
+        {
+            var query = _applicationRepo.GetApplicationsByEmployee(employeeId);
+
+            var pagedResult = await _paginationService
+                .PaginateAsync(query, page, limit);
+
+            return new PagedResult<EmployeeApplicationDto>
+            {
+                CurrentPage = pagedResult.CurrentPage,
+                TotalPages = pagedResult.TotalPages,
+                TotalCount = pagedResult.TotalCount,
+                Data = pagedResult.Data.Select(a => new EmployeeApplicationDto
+                {
+                    Id = a.Id,
+                    JobTitle = a.Job.Title,
+                    CompanyName = a.Job.AddedBy?.CompanyName ?? "",
+                    CompanyLogo = a.Job.AddedBy?.CompanyLogoUrl,
+                    JobCity = a.Job.City,
+                    JobRegion = a.Job.Region,
+                    Status = a.Status,
+                    AppliedAt = a.AppliedAt,
+                    Answers = a.Answers.Select(ans => new ApplicationAnswerDetailsDto
+                    {
+                        QuestionName = ans.Question.QuestionName,
+                        AnswerType = ans.Question.AnswerType,
+                        TextAnswer = ans.TextAnswer,
+                        RecordUrl = ans.RecordAnswerUrl
+                    }).ToList()
                 }).ToList()
             };
         }

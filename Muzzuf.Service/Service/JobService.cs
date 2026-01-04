@@ -27,12 +27,15 @@ namespace Muzzuf.Service.Service
             _paginationService = paginationService;
         }
 
-        private JobDto jobResponse(Job job, string employerName = null)
+        private JobDto jobResponse(Job job,string currentUserId = null, string employerName = null)
         {
+            var app = job.Applications.FirstOrDefault(a => a.EmployeeId == currentUserId);
             return new JobDto
             {
                 Id = job.Id.ToString(),
                 EmployerName = employerName ?? job.AddedBy?.FullName,
+                CompanyName = job.AddedBy?.CompanyName,
+                CompanyLogo = job.AddedBy?.CompanyLogoUrl,
                 Title = job.Title,
                 Description = job.Description,
                 Region = job.Region,
@@ -40,7 +43,7 @@ namespace Muzzuf.Service.Service
                 RequiredLanguage = job.RequiredLanguage,
                 Level = job.Level,
                 IsActive = job.IsActive,
-
+                ApplicationStatus = app?.Status,
                 Questions = job.Questions.Select(q => new JobQuestionDto
                 {
                     Id = q.Id,
@@ -137,6 +140,8 @@ namespace Muzzuf.Service.Service
                 {
                     Id = j.Id.ToString(),
                     EmployerName = j.AddedBy.FullName,
+                    CompanyName = j.AddedBy.CompanyName,
+                    CompanyLogo = j.AddedBy.CompanyLogoUrl,
                     Title = j.Title,
                     Region = j.Region,
                     City = j.City,
@@ -149,12 +154,12 @@ namespace Muzzuf.Service.Service
             return await _paginationService.PaginateAsync(dtoQuery, page, limit);
         }
 
-        public async Task<JobDto> GetJobByIdAsyc(int jobId)
+        public async Task<JobDto> GetJobByIdAsyc(int jobId, string currentUserId)
         {
             var job = await _jobRepo.GetByIdWithQuestionsAsync(jobId);
             if (job == null)
                 throw new NotFoundException("Job Not Found");
-            return jobResponse(job);
+            return jobResponse(job, currentUserId);
         }
 
         public async Task<JobDto> UpdateJobAsync(int jobId, string employerId, CreateUpdateJobDto dto)

@@ -65,5 +65,18 @@ namespace Muzzuf.Controllers
             await _applicationService.RejectApplicationAsync(applicationId, GetUserId());
             return Ok(new { message = "Application Rejected" });
         }
+
+        [HttpGet("my-applications")]
+        [Authorize(Roles = "Employee")]
+        public async Task<IActionResult> GetMyApplications(int page =1, int limit = 8)
+        {
+            var employeeId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (employeeId == null) return Unauthorized();
+
+            var applications = await _applicationService
+                .GetEmployeeApplicationsAsync(employeeId,page, limit);
+
+            return Ok(applications);
+        }
     }
 }

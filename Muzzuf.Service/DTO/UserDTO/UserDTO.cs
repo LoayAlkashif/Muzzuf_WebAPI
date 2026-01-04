@@ -12,6 +12,7 @@ namespace Muzzuf.Service.DTO.UserDTO
 
         public string FullName { get; set; }
         public string Email { get; set; }
+        public string? Bio { get; set; }
 
         public string? Region { get; set; }
         public string? City { get; set; }
@@ -23,7 +24,7 @@ namespace Muzzuf.Service.DTO.UserDTO
         public string? CvUrl { get; set; }
 
 
-        public string? ComapnyName { get; set; }
+        public string? CompanyName { get; set; }
         public string? CompanyDescription { get; set; }
         public string? CompanyLogoUrl { get; set; }
     }

@@ -35,5 +35,15 @@ namespace Muzzuf.DataAccess.Repository
             return _context.Applications.Include(a => a.Employee)
                 .Where(a => a.JobId == jobId);
         }
+
+        public IQueryable<Application> GetApplicationsByEmployee(string employeeId)
+        {
+            return _context.Applications.Include(a => a.Job)
+                .ThenInclude(j => j.AddedBy)
+                .Include(a => a.Answers)
+                .ThenInclude(ans => ans.Question)
+                .OrderByDescending(a => a.AppliedAt)
+                .Where(e => e.EmployeeId == employeeId);
+        }
     }
 }

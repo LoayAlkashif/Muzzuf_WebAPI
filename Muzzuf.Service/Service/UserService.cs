@@ -53,6 +53,7 @@ namespace Muzzuf.Service.Service
                 Id = user.Id,
                 Email = user.Email,
                 FullName = user.FullName,
+                Bio = user.Bio,
                 Region = user.Region,
                 City = user.City,
                 ProfileImageUrl = user.ProfileImageUrl ?? null,
@@ -60,7 +61,7 @@ namespace Muzzuf.Service.Service
                 Views = user.Views,
                 CvUrl = user.CVUrl ?? null,
 
-                ComapnyName = user.CompanyName ?? null,
+                CompanyName = user.CompanyName ?? null,
                 CompanyDescription = user.CompanyDescription ?? null,
                 CompanyLogoUrl = user.CompanyLogoUrl ?? null
 
@@ -82,11 +83,16 @@ namespace Muzzuf.Service.Service
             {
                 FullName = user.FullName,
                 Email = user.Email,
+                Bio = user.Bio,
                 City = user.City,
                 Region = user.Region,
                 ProfileImageUrl = user.ProfileImageUrl ?? null,
                 ProgrammingLanguages = user.ProgrammingLanguages ?? null,
                 CvUrl = user.CVUrl ?? null,
+
+                CompanyName = user.CompanyName ?? null,
+                CompanyDescription = user.CompanyDescription ?? null,
+                CompanyLogoUrl = user.CompanyLogoUrl ?? null
 
             };
 
@@ -127,10 +133,13 @@ namespace Muzzuf.Service.Service
             var user = await _userManager.FindByIdAsync(userId) ??
                 throw new NotFoundException("User not Found");
 
-            user.FullName = dto.FullName ?? user.FullName;
+            user.FullName = dto.FullName?.Trim() ?? user.FullName;
             user.Region = dto.Region ?? user.Region;
             user.City = dto.City ?? user.City;
             user.Bio = dto.Bio ?? user.Bio;
+
+            user.CompanyName = dto.CompanyName?.Trim() ?? user.CompanyName;
+            user.CompanyDescription = dto.CompanyDescription ?? user.CompanyDescription;
 
             if (dto.ProgrammingLanguages != null)
                 user.ProgrammingLanguages = dto.ProgrammingLanguages;
@@ -166,7 +175,7 @@ namespace Muzzuf.Service.Service
                throw new NotFoundException("User not Found");
 
             if (file == null)
-                throw new BadRequestException("Image is Required");
+                throw new BadRequestException("File is Required");
 
             if (user.CVUrl is not null)
                 _fileService.Delete(user.CVUrl);
@@ -177,7 +186,7 @@ namespace Muzzuf.Service.Service
 
         public async Task UploadProfileImageAsync(string userId, IFormFile file)
         {
-
+            
             if (!IsVaildImageFile(file))
                 throw new BadRequestException("Invalid image format");
             var user = await _userManager.FindByIdAsync(userId) ?? 

@@ -14,5 +14,8 @@ namespace Muzzuf.DataAccess.IRepository
         Task<bool> HasUserAppliedAsync(string employeeId, int jobId);
 
         IQueryable<Application> GetJobApplicationsQueryable(int jobId);
+
+        IQueryable<Application> GetApplicationsByEmployee(string employeeId);
+
     }
 }

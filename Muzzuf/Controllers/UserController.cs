@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Muzzuf.DataAccess.Entites;
+using Muzzuf.Service.DTO.UserDTO;
 using Muzzuf.Service.IService;
 
 namespace Muzzuf.Controllers
@@ -30,7 +31,7 @@ namespace Muzzuf.Controllers
             var user = await _userManager.GetUserAsync(User);
             await _userService.UploadProfileImageAsync(user.Id, file);
 
-            return Ok(new { ProfileImage =  user.ProfileImageUrl });
+            return Ok(new { profileImage =  user.ProfileImageUrl });
 
         }
 
@@ -40,9 +41,9 @@ namespace Muzzuf.Controllers
         public async Task<IActionResult> UploadCompanyLogo(IFormFile file)
         {
             var user = await _userManager.GetUserAsync(User);
-            await _userService.UploadProfileImageAsync(user.Id, file);
+            await _userService.UploadCompanyLogoImageAsync(user.Id, file);
 
-            return Ok(new { CompanyLogo = user.CompanyLogoUrl });
+            return Ok(new { logoUrl = user.CompanyLogoUrl });
         }
 
 
@@ -84,6 +85,14 @@ namespace Muzzuf.Controllers
         {
             var result = await _userService.SearchAsync(query, page, limit);
             return Ok(result);
+        }
+
+        [HttpPut("update-user/{id}")]
+        [Authorize]
+        public async Task<IActionResult> UpdateUser(string id, UpdateUserDto dto)
+        {
+             await _userService.UpdateProfileAsync(id, dto);
+            return Ok("Updated Successfully");
         }
 
     }

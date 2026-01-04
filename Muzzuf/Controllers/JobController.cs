@@ -41,9 +41,13 @@ namespace Muzzuf.Controllers
         }
 
         [HttpGet("{id:int}")]
+        [Authorize(Roles ="Employee, Employer")]
         public async Task<IActionResult> GetJobById(int id)
         {
-            var job = await _jobService.GetJobByIdAsyc(id);
+            var user = await _userManager.GetUserAsync(User);
+            if(user  == null)
+                return BadRequest("Please login");
+            var job = await _jobService.GetJobByIdAsyc(id, user.Id);
 
             return Ok(job);
         }

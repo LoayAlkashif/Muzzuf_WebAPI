@@ -19,5 +19,7 @@ namespace Muzzuf.Service.IService
 
         Task<ApplicationDetailsDto> GetApplicationDetailsAsync(int appId, string employerId);
 
+        Task<PagedResult<EmployeeApplicationDto>> GetEmployeeApplicationsAsync(string employeeId, int page, int limit);
+
     }
 }
