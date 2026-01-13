@@ -61,6 +61,7 @@ namespace Muzzuf.Service.Service
 
             var applicationsQuery = _applicationRepo.GetJobApplicationsQueryable(jobId)
                 .Where(a => string.IsNullOrEmpty(query) || a.Employee.FullName.Contains(query))
+                .OrderBy(a => a.Status == ApplicationStatus.Pending ? 0: 1)
                 .OrderByDescending(a => a.AppliedAt)
                 .Select(a => new ApplicationListDto
                 {
@@ -68,14 +69,21 @@ namespace Muzzuf.Service.Service
                     EmployeeId = a.EmployeeId,
                     EmployeeName = a.Employee.FullName,
                     ProfileImageUrl = a.Employee.ProfileImageUrl ?? null,
+                    JobTitle = a.Job.Title,
+                    CvUrl = a.Employee.CVUrl ?? null,
                     Status = a.Status,
-                    AppliedAt = a.AppliedAt
+                    AppliedAt = a.AppliedAt,
+                    Answers = a.Answers.Select(ans => new ApplicationAnswerDetailsDto
+                    {
+                        QuestionName = ans.Question.QuestionName,
+                        AnswerType = ans.Question.AnswerType,
+                        TextAnswer = ans.TextAnswer,
+                        RecordUrl = ans.RecordAnswerUrl
+                    }).ToList()
                 });
 
 
                 return await _paginationService.PaginateAsync(applicationsQuery, page, limit);
-
-
 
         }
 

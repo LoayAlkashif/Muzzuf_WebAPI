@@ -19,6 +19,7 @@ namespace Muzzuf.DataAccess.Repository
             return await _context.Applications
                 .Include(a => a.Employee)
                 .Include(a => a.Job)
+                .ThenInclude(j => j.AddedBy)
                 .Include(a => a.Answers)
                 .ThenInclude(ans => ans.Question)
                 .FirstOrDefaultAsync(a => a.Id == applicationId);
@@ -33,7 +34,7 @@ namespace Muzzuf.DataAccess.Repository
         public IQueryable<Application> GetJobApplicationsQueryable(int jobId)
         {
             return _context.Applications.Include(a => a.Employee)
-                .Where(a => a.JobId == jobId);
+                .Where(a => a.JobId == jobId).Include(a => a.Answers).ThenInclude(ans => ans.Question);
         }
 
         public IQueryable<Application> GetApplicationsByEmployee(string employeeId)
