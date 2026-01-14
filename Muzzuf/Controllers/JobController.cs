@@ -77,7 +77,7 @@ namespace Muzzuf.Controllers
         public async Task<IActionResult> DeActiveJob(int id)
         {
             var employer = await _userManager.GetUserAsync(User);
-            _jobService.DeActiveJobAsync(id, employer.Id);
+            await _jobService.DeActiveJobAsync(id, employer.Id);
 
             return Ok(new { message = "Job Deactivated Successfully" });
         }
