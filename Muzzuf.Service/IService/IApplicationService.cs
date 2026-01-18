@@ -15,7 +15,7 @@ namespace Muzzuf.Service.IService
         Task AcceptApplicationAsync (int applicationId, string employerId);
         Task RejectApplicationAsync (int applicationId, string employerId);
 
-        Task<PagedResult<ApplicationListDto>> GetJobApplicationsAsync(int jobId, string employerId, string query, int page, int limit);
+        Task<JobApplicationsResponseDto> GetJobApplicationsAsync(int jobId, string employerId, string query, int page, int limit);
 
         Task<ApplicationDetailsDto> GetApplicationDetailsAsync(int appId, string employerId);
 

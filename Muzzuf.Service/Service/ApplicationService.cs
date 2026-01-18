@@ -49,7 +49,8 @@ namespace Muzzuf.Service.Service
 
 
 
-        public async Task<PagedResult<ApplicationListDto>> GetJobApplicationsAsync(int jobId, string employerId, string query, int page, int limit)
+        public async Task<JobApplicationsResponseDto>
+            GetJobApplicationsAsync(int jobId, string employerId, string query, int page, int limit)
         {
 
             var job = await _jobRepo.GetByIdAsync(jobId)
@@ -69,7 +70,7 @@ namespace Muzzuf.Service.Service
                     EmployeeId = a.EmployeeId,
                     EmployeeName = a.Employee.FullName,
                     ProfileImageUrl = a.Employee.ProfileImageUrl ?? null,
-                    JobTitle = a.Job.Title,
+                    JobTitle = job.Title,
                     CvUrl = a.Employee.CVUrl ?? null,
                     Status = a.Status,
                     AppliedAt = a.AppliedAt,
@@ -83,7 +84,15 @@ namespace Muzzuf.Service.Service
                 });
 
 
-                return await _paginationService.PaginateAsync(applicationsQuery, page, limit);
+                var pagedApps =  await _paginationService.PaginateAsync(applicationsQuery, page, limit);
+
+            return new JobApplicationsResponseDto
+            {
+                JobId = job.Id,
+                JobTitle = job.Title,
+                Applications = pagedApps
+
+            };
 
         }
 
@@ -253,6 +262,7 @@ namespace Muzzuf.Service.Service
                     JobRegion = a.Job.Region,
                     Status = a.Status,
                     AppliedAt = a.AppliedAt,
+                    IsActive = a.Job.IsActive,
                     Answers = a.Answers.Select(ans => new ApplicationAnswerDetailsDto
                     {
                         QuestionName = ans.Question.QuestionName,

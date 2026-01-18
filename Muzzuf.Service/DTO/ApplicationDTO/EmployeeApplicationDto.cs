@@ -17,6 +17,7 @@ namespace Muzzuf.Service.DTO.ApplicationDTO
         public string JobRegion { get; set; }
         public ApplicationStatus Status { get; set; }
         public DateTime AppliedAt { get; set; }
+        public bool IsActive { get; set; }
         public List<ApplicationAnswerDetailsDto> Answers { get; set; } = new();
 
     }
