@@ -99,18 +99,17 @@ namespace Muzzuf.Service.Service
 
         public async Task ApplyJobAsync(string employeeId, ApplyJobDto dto)
         {
-            var job = await _jobRepo.GetByIdWithQuestionsAsync(dto.JobId) ?? throw new BadRequestException("Job is not Found");
-
-
+            var job = await _jobRepo.GetByIdWithQuestionsAsync(dto.JobId)
+                ?? throw new BadRequestException("Job is not Found");
 
             if (!job.IsActive)
                 throw new BadRequestException("Job already closed");
 
-            var existingApplication = await _applicationRepo.HasUserAppliedAsync(employeeId, dto.JobId);
+            var existingApplication =
+                await _applicationRepo.HasUserAppliedAsync(employeeId, dto.JobId);
 
             if (existingApplication)
                 throw new BadRequestException("You have already applied for this job");
-
 
             var app = new DataAccess.Entites.Application
             {
@@ -119,14 +118,26 @@ namespace Muzzuf.Service.Service
                 Answers = new List<ApplicationAnswer>()
             };
 
-            foreach(var q in job.Questions)
+            if (!job.Questions.Any())
+            {
+                await _applicationRepo.AddAsync(app);
+                await _applicationRepo.SaveAsync();
+                return;
+            }
+
+            foreach (var q in job.Questions)
             {
                 var answerDto = dto.Answers.FirstOrDefault(a => a.QuestionId == q.Id);
-                if(q.AnswerType == AnswerType.Record)
-                {
 
-                    if (answerDto?.RecordFile == null)
-                        throw new BadRequestException($"Record is required for question: {q.QuestionName}");
+                if (answerDto == null)
+                    throw new BadRequestException(
+                        $"Answer is required for question: {q.QuestionName}");
+
+                if (q.AnswerType == AnswerType.Record)
+                {
+                    if (answerDto.RecordFile == null)
+                        throw new BadRequestException(
+                            $"Record is required for question: {q.QuestionName}");
 
                     if (!AllowedAudioTypes.Contains(answerDto.RecordFile.ContentType))
                         throw new BadRequestException("Invalid audio format");
@@ -150,6 +161,14 @@ namespace Muzzuf.Service.Service
                 }
                 else
                 {
+                    if (string.IsNullOrWhiteSpace(answerDto.TextAnswer))
+                        throw new BadRequestException(
+                            $"Text answer is required for question: {q.QuestionName}");
+
+                    if (answerDto.TextAnswer.Length > 500)
+                        throw new BadRequestException(
+                            $"Answer must not exceed 500 characters");
+
                     app.Answers.Add(new ApplicationAnswer
                     {
                         QuestionId = q.Id,
@@ -162,7 +181,6 @@ namespace Muzzuf.Service.Service
             await _applicationRepo.SaveAsync();
         }
 
-       
         public async Task AcceptApplicationAsync(int applicationId, string employerId)
         {
 
@@ -263,7 +281,7 @@ namespace Muzzuf.Service.Service
                     Status = a.Status,
                     AppliedAt = a.AppliedAt,
                     IsActive = a.Job.IsActive,
-                    Answers = a.Answers.Select(ans => new ApplicationAnswerDetailsDto
+                    Answers = a?.Answers.Select(ans => new ApplicationAnswerDetailsDto
                     {
                         QuestionName = ans.Question.QuestionName,
                         AnswerType = ans.Question.AnswerType,

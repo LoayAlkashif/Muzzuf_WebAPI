@@ -10,6 +10,6 @@ namespace Muzzuf.Service.DTO.ApplicationDTO
     {
         public int JobId { get; set; }
 
-        public List<ApplicationAnswerDto> Answers { get; set; }
+        public List<ApplicationAnswerDto> Answers { get; set; } = new();
     }
 }
